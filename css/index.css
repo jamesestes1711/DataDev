@@ -1,0 +1,22 @@
+body {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+h1 {
+    color: rgb(255, 255, 255);
+}
+
+
+
+#selector {
+    padding-left: 20px;
+    float: left;
+    position: fixed;
+
+}
+
+#items {
+    float: right;
+}
