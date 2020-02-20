@@ -2,11 +2,14 @@
 Include 'db_connection.php';
 // Initialize the session
 session_start();
+/*
 // Check if the user is logged in, if not then redirect him to login page
 if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 header("location: login.php");
 exit;
+
 }
+*/
 $dbhost = "localhost:3306";
 $dbuser = "sgchs_jestes";
 $dbpass = "hornets";
@@ -46,352 +49,371 @@ $ctemp10 = mysqli_query($conn, "SELECT * FROM CRYS_CREA_LEADER WHERE ID=10");
 $cfinal10 = mysqli_fetch_assoc($ctemp10);
 $ctemp11 = mysqli_query($conn, "SELECT * FROM CRYS_CREA_LEADER WHERE ID=11");
 $cfinal11 = mysqli_fetch_assoc($ctemp11);
+
+
+if($_SESSION["display"] == ""){
+  $_SESSION["display"] = "Guest";
+}
+
+if($_SESSION["display"] == "Guest"){
+    $logtext = "Log In";
+}   else{
+    $logtext = "Log Out";
+}
+
 ?>
 <html>
-  <head>
-  <link rel="stylesheet" type="text/css" href="pace.css" />
-      <script src="pace.js"></script>
+
+<head>
+<script src="functions.js"></script>
+
+    <script type='text/javascript'>
+    title = "Leaderboards | Deep Dive Gaming | ";
+    position = 0;
+
+    function scrolltitle() {
+        document.title = title.substring(position, title.length) + title.substring(0, position);
+        position++;
+        if (position > title.length) position = 0;
+        titleScroll = window.setTimeout(scrolltitle, 200);
+    }
+    scrolltitle();
+    </script>
+    <link rel="stylesheet" type="text/css" href="pace.css" />
+    <script src="pace.js"></script>
     <link rel="stylesheet" type="text/css" href="index.css" />
-    <link rel="icon" href="img/newlogo.png" sizes="16x16" type="image/png"> 
+    <link rel="icon" href="img/newlogo.png" sizes="16x16" type="image/png">
     <style>
-      #merch #m_con th {
+    #merch #m_con th {
         border: 5px solid black;
-      }
+    }
     </style>
-  </head>
-  <body style="background-image: url(''); background-repeat: no-repeat; background-size: cover; background-size: 100% 100%;">
+</head>
+
+<body onload="startTime()"
+    style="background-image: url(''); background-repeat: no-repeat; background-size: cover; background-size: 100% 100%;">
     <center>
-      <h1 style="color: rgb(255, 255, 255);">Deep Dive Gaming
-      </h1>
+        <h1 style="color: rgb(255, 255, 255);">Deep Dive Gaming
+        </h1>
     </center>
     <div id="selector" bgcolor="white" style="width: 100%; height: 100%; top: 0px; position: fixed; padding-left: 0px;">
-      <table  style="width: 15%; background-color: rgba(0, 0, 0, .001);">
-        <tr>
-          <th>
-            <h4 style="color: rgb(85, 85, 85);">Hi, 
-              <b>
-                <?php echo htmlspecialchars($_SESSION["username"]); ?>
-              </b>.
-            </h4>
-          </th>
-        </tr>
-        <tr>
-          <th>
-            <a href="logout.php">
-              <input type="button" value="Log Out">
-            </a>
-          </th>
-        </tr>
-        <tr>
-          <th style="padding-top: 0%;">
-            <a href="index.php">
-              <img src="img/house1.png" width="25%" height="10%" alt="Home">
-            </a>
-          </th>
-        </tr>
-        <br>
-        <tr>
-          <br>
-          <th style="padding-top: 10%;">
-            <a href="crys.php">
-              <img src="img/crys1.png" width="35%" height="8%" alt="Crystal Creatures">
-            </a>
-          </th>
-        </tr>
-        <br>
-        <tr>
-          <th style="padding-top: 10%;">
-            <a href="space.php">
-              <img src="img/unnamed1.png" width="30%" height="7%" alt="Untitled Mech Game"/>
-            </a>
-          </th>
-        </tr>
-        <tr>
-          <th style="padding-top: 10%;">
-            <a href="leader.php">
-              <img src="img/leader1.png" width="25%" height="20%" alt="Leaderboards"/>
-            </a>
-          </th>
-        </tr>
-        <tr>
-          <th style="padding-top: 10%; padding-left: 0px; float: left; margin-left: 0px;">
-            <a href="easteregg.html">
-              <img src="img/logo.png" width="70%" height="30%" alt="Leaderboards"/>
-            </a>
-          </th>
-        </tr>
-      </table>
+        <table style="width: 15%; background-color: rgba(0, 0, 0, .001);">
+            <tr>
+                <th>
+                    <h4 style="color: rgb(85, 85, 85);">Hi,
+                        <b><?php echo htmlspecialchars($_SESSION["display"]); ?></b>.</h4>
+                </th>
+            </tr>
+            <tr>
+                <th><a href="logout.php"><input type="button" id="loginout" value="<?php echo $logtext?>"></a></th>
+            </tr>
+            <tr>
+                <th style="padding-top: 0%;"><a href="index.php"><img src="img/house1.png" width="25%" height="10%"
+                            alt="Home"></a></th>
+            </tr>
+            <br>
+            <tr>
+                <br>
+                <th style="padding-top: 0%;"><a href="crys.php"><img src="img/crys1.png" width="35%" height="8%"
+                            alt="Crystal Creatures"></a></th>
+            </tr>
+            <br>
+            <tr>
+                <th style="padding-top: 0%;"><a href="space.php"><img src="img/unnamed1.png" width="30%" height="7%"
+                            alt="Untitled Mech Game" /></a></th>
+            </tr>
+            <tr>
+                <th style="padding-top: 0%;"><a href="leader.php"><img src="img/leader1.png" width="25%" height="20%"
+                            alt="Leaderboards" /></a></th>
+            </tr>
+            <!--
+            <tr>
+                <th style="padding-top: 0%; padding-left: 0px; float: left; margin-left: 0px;"><a href="cart.php"><img src="img/cart.png"
+                        width="30%" height="15%" alt="Leaderboards" /></a></th>
+            </tr>
+   -->
+            <tr>
+                <th style="padding-top: 42%; padding-left: 0px; float: left; margin-left: 0px;"><img src="img/logo.png"
+                        width="70%" height="30%" alt="Leaderboards" /></th>
+            </tr>
+            <tr>
+                <th>
+                    <div id=txt></div>
+                </th>
+            </tr>
+        </table>
     </div>
     <center>
-      <div id="leaderboards" style="align: right; color: (125, 125, 125); ">
-        <h2 style="color: rgb(125, 125, 125);">Crystal Creatures
-        </h2>
-        <table width="90%" style="padding-left: 10%; padding-top: 0%;">
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-              Name
-            </th>
-            <th>
-              Place
-            </th>
-            <th>
-              Team 1
-            </th>
-            <th>
-              Team 2
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal2['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal2['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal2['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal2['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal3['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal3['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal3['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal3['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal4['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal4['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal4['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal4['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal5['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal5['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal5['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal5['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal6['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal6['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal6['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal6['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal7['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal7['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal7['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal7['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal8['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal8['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal8['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal8['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal9['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal9['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal9['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal9['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal10['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal10['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal10['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal10['TEAM2'] ?>
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-            <?php echo $cfinal11['NAME'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal11['PLACE'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal11['TEAM1'] ?>
-            </th>
-            <th>
-            <?php echo $cfinal11['TEAM2'] ?>
-            </th>
-          </tr>
-        </table>
-        <br>
-        <h2 style="color: rgb(125, 125, 125);">Untitled Mech Game
-        </h2>
-        <table width="90%" style="padding-left: 10%; padding-top: 0%;">
-          <tr style="color: rgb(125, 125, 125);">
-            <th style="color: rgb(125, 125, 125);">
-              Name
-            </th>
-            <th style="color: rgb(125, 125, 125);">Stat
-            </th>
-            <th style="color: rgb(125, 125, 125);">Record
-            </th>
-          </tr>
-          <tr style="color: rgb(125, 125, 125);">
-            <th>
-              <p>
-                <?php echo $final1['NAME'] ?>
-              </p>
-            </th>
-            <th>
-              <p>
-                <?php echo $final1['STAT'] ?>
-              </p>
-            </th>
-            <th>
-              <?php echo $final1['NUMBER'] ?>
-          </p>
-          </th>
-        </tr>
-      <tr style="color: rgb(125, 125, 125);">
-        <th>
-          <p>
-            <?php echo $final2['NAME'] ?>
-          </p>
-        </th>
-        <th>
-          <p>
-            <?php echo $final2['STAT'] ?>
-          </p>
-        </th>
-        <th>
-          <?php echo $final2['NUMBER'] ?>
-      </p>
-      </th>
-    </tr>
-  <tr style="color: rgb(125, 125, 125);">
-    <th>
-      <p>
-        <?php echo $final3['NAME'] ?>
-      </p>
-    </th>
-    <th>
-      <p>
-        <?php echo $final3['STAT'] ?>
-      </p>
-    </th>
-    <th>
-      <?php echo $final3['NUMBER'] ?>
-  </p>
-  </th>
-</tr>
-<tr style="color: rgb(125, 125, 125);">
-  <th>
-    <p>
-      <?php echo $final4['NAME'] ?>
-    </p>
-  </th>
-  <th>
-    <p>
-      <?php echo $final4['STAT'] ?>
-    </p>
-  </th>
-  <th>
-    <?php echo $final4['NUMBER'] ?>
-</p>
-</th>
-</tr>
-<tr style="color: rgb(125, 125, 125);">
-  <th>
-    <p>
-      <?php echo $final5['NAME'] ?>
-    </p>
-  </th>
-  <th>
-    <p>
-      <?php echo $final5['STAT'] ?>
-    </p>
-  </th>
-  <th>
-    <?php echo $final5['NUMBER'] ?>
-</p>
-</th>
-</tr>
-<tr style="color: rgb(125, 125, 125);">
-  <th>
-    <p>
-      <?php echo $final6['NAME'] ?>
-    </p>
-  </th>
-  <th>
-    <p>
-      <?php echo $final6['STAT'] ?>
-    </p>
-  </th>
-  <th>
-    <?php echo $final6['NUMBER'] ?>
-</p>
-</th>
-</tr>
-</div>
-</center>
+        <div id="leaderboards" style="align: right; color: (125, 125, 125); ">
+            <h2 style="color: rgb(125, 125, 125);">Crystal Creatures
+            </h2>
+            <table width="90%" style="padding-left: 10%; padding-top: 0%;">
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Place
+                    </th>
+                    <th>
+                        Team 1
+                    </th>
+                    <th>
+                        Team 2
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal2['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal2['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal2['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal2['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal3['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal3['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal3['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal3['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal4['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal4['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal4['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal4['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal5['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal5['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal5['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal5['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal6['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal6['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal6['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal6['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal7['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal7['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal7['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal7['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal8['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal8['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal8['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal8['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal9['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal9['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal9['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal9['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal10['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal10['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal10['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal10['TEAM2'] ?>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <?php echo $cfinal11['NAME'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal11['PLACE'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal11['TEAM1'] ?>
+                    </th>
+                    <th>
+                        <?php echo $cfinal11['TEAM2'] ?>
+                    </th>
+                </tr>
+            </table>
+            <br>
+            <h2 style="color: rgb(125, 125, 125);">Untitled Mech Game
+            </h2>
+            <table width="90%" style="padding-left: 10%; padding-top: 0%;">
+                <tr style="color: rgb(125, 125, 125);">
+                    <th style="color: rgb(125, 125, 125);">
+                        Name
+                    </th>
+                    <th style="color: rgb(125, 125, 125);">Stat
+                    </th>
+                    <th style="color: rgb(125, 125, 125);">Record
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <p>
+                            <?php echo $final1['NAME'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <p>
+                            <?php echo $final1['STAT'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <?php echo $final1['NUMBER'] ?>
+                        </p>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <p>
+                            <?php echo $final2['NAME'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <p>
+                            <?php echo $final2['STAT'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <?php echo $final2['NUMBER'] ?>
+                        </p>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <p>
+                            <?php echo $final3['NAME'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <p>
+                            <?php echo $final3['STAT'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <?php echo $final3['NUMBER'] ?>
+                        </p>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <p>
+                            <?php echo $final4['NAME'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <p>
+                            <?php echo $final4['STAT'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <?php echo $final4['NUMBER'] ?>
+                        </p>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <p>
+                            <?php echo $final5['NAME'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <p>
+                            <?php echo $final5['STAT'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <?php echo $final5['NUMBER'] ?>
+                        </p>
+                    </th>
+                </tr>
+                <tr style="color: rgb(125, 125, 125);">
+                    <th>
+                        <p>
+                            <?php echo $final6['NAME'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <p>
+                            <?php echo $final6['STAT'] ?>
+                        </p>
+                    </th>
+                    <th>
+                        <?php echo $final6['NUMBER'] ?>
+                        </p>
+                    </th>
+                </tr>
+        </div>
+    </center>
 </body>
+
 </html>
